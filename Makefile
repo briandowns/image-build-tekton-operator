@@ -8,7 +8,7 @@ BUILD_META=-build$(shell date +%Y%m%d)
 ORG ?= briandowns
 PKG ?= github.com/tektoncd/operator
 SRC ?= github.com/tektoncd/operator
-TAG ?= v0.22.0
+TAG ?= v0.54.0
 
 ifneq ($(DRONE_TAG),)
 TAG := $(DRONE_TAG)

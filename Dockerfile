@@ -10,27 +10,27 @@ RUN set -x &&          \
     make
 
 ARG SRC="github.com/tektoncd/operator"
-ARG TAG="v0.22.0"
+ARG TAG="v0.54.0"
 ARG ARCH="amd64"
 RUN git clone --depth=1 https://${SRC}.git ${GOPATH}/src/${SRC}
 WORKDIR ${GOPATH}/src/${SRC}
 RUN git fetch --all --tags --prune
 RUN git checkout tags/${TAG} -b ${TAG}
-RUN for bin in $(ls cmd/); do                                                      \
-    GOARCH=${ARCH} CGO_ENABLED=1                                                   \
-    go build                                                                       \
-        -gcflags=-trimpath=${GOPATH}/src                                           \
-        -ldflags "-linkmode=external -extldflags \"-static -Wl,--fatal-warnings\"" \
-        -o bin/${bin} ./cmd/${bin};                                                \
+RUN for bin in $(ls cmd/kubernetes); do                                                \
+        GOARCH=${ARCH} CGO_ENABLED=1                                                   \
+        go build                                                                       \
+            -gcflags=-trimpath=${GOPATH}/src                                           \
+            -ldflags "-linkmode=external -extldflags \"-static -Wl,--fatal-warnings\"" \
+            -o bin/${bin} ./cmd/kubernetes/${bin};                                     \
     done
-RUN for bin in $(ls bin/); do           \
+RUN for bin in $(ls cmd/kubernetes); do           \
         go-assert-static.sh bin/${bin} && exit 0; \
     done
-RUN for bin in $(ls bin/); do           \
+RUN for bin in $(ls cmd/kubernetes); do           \
         go-assert-boring.sh bin/${bin} && exit 0; \
     done
 	    
-RUN for bin in $(ls cmd/); do                 \
+RUN for bin in $(ls cmd/kubernetes); do       \
         install -s bin/${bin} /usr/local/bin; \
     done
 
